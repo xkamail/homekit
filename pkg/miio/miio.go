@@ -2,7 +2,6 @@ package miio
 
 import (
 	"encoding/json"
-	"log/slog"
 	"time"
 )
 
@@ -111,7 +110,6 @@ func (m *Mi) updateState() {
 	}
 	var r Result
 	json.Unmarshal(m.rawState["get_properties"].([]byte), &r)
-	slog.Info("updateState", "result", r.Result)
 	m.Lock()
 	for _, p := range r.Result {
 		switch p.Piid {
@@ -138,7 +136,7 @@ func (m *Mi) updateState() {
 
 // leak memory
 func (m *Mi) pollStatus() {
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Second * 10)
 	defer ticker.Stop()
 	for {
 		select {

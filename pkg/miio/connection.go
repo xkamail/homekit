@@ -2,6 +2,7 @@ package miio
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net"
 )
 
@@ -94,6 +95,7 @@ func (c *connection) in() {
 		default:
 			size, _, err := c.conn.ReadFromUDP(buf)
 			if err != nil {
+				slog.Error("Failed to read from UDP", "error", err)
 				continue
 			}
 
@@ -117,7 +119,9 @@ func (c *connection) out() {
 				return
 			}
 
-			c.conn.Write(msg)
+			if _, err := c.conn.Write(msg); err != nil {
+				slog.Error("Failed to write to UDP", "error", err)
+			}
 		}
 	}
 }
