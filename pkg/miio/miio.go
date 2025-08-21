@@ -116,13 +116,17 @@ func (m *Mi) updateState() {
 	for _, p := range r.Result {
 		switch p.Piid {
 		case 1:
-			m.Power = p.Value.(bool)
+			if v, ok := p.Value.(bool); ok {
+				m.Power = v
+			}
 		case 5:
 			if f, ok := p.Value.(float64); ok {
 				m.Level = int(f)
 			}
 		case 6:
-			m.Swing = p.Value.(bool)
+			if v, ok := p.Value.(bool); ok {
+				m.Swing = v
+			}
 		}
 	}
 	m.Unlock()
