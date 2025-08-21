@@ -56,7 +56,7 @@ func (m *Mi) SetPower(on bool) {
 			Piid:  1,
 			Value: on,
 		},
-	}, false, 1)
+	}, false, 5)
 }
 
 func (m *Mi) SetLevel(n int) {
@@ -66,7 +66,7 @@ func (m *Mi) SetLevel(n int) {
 			Piid:  5,
 			Value: n,
 		},
-	}, false, 1)
+	}, false, 5)
 }
 
 func (m *Mi) SetSwing(b bool) {
@@ -76,7 +76,7 @@ func (m *Mi) SetSwing(b bool) {
 			Piid:  6,
 			Value: b,
 		},
-	}, false, 1)
+	}, false, 5)
 }
 
 func (m *Mi) GetProperties() bool {
