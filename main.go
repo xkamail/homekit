@@ -42,6 +42,7 @@ func main() {
 	a.Fan.AddC(fanSwing.C)
 	fanSwing.OnValueRemoteUpdate(func(v int) {
 		log.Println("Fan Swing: ", v)
+		m.SetSwing(v == 1)
 	})
 
 	fanDirection := characteristic.NewRotationDirection()
@@ -60,6 +61,7 @@ func main() {
 			dir = 1
 		}
 		fanDirection.SetValue(dir)
+		fanSwing.SetValue(dir)
 	})
 
 	// Store the data in the "./db" directory.
