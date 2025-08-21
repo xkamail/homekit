@@ -2,6 +2,7 @@ package miio
 
 import (
 	"encoding/json"
+	"log/slog"
 	"time"
 )
 
@@ -110,15 +111,16 @@ func (m *Mi) updateState() {
 	}
 	var r Result
 	json.Unmarshal(m.rawState["get_properties"].([]byte), &r)
-
+	slog.Info("updateState", "result", r.Result)
 	m.Lock()
 	for _, p := range r.Result {
 		switch p.Piid {
 		case 1:
 			m.Power = p.Value.(bool)
 		case 5:
-			f := p.Value.(float64)
-			m.Level = int(f)
+			if f, ok := p.Value.(float64); ok {
+				m.Level = int(f)
+			}
 		case 6:
 			m.Swing = p.Value.(bool)
 		}
