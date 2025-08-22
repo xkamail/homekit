@@ -2,7 +2,6 @@ package miio
 
 import (
 	"encoding/json"
-	"log/slog"
 	"time"
 )
 
@@ -135,7 +134,6 @@ func (m *SmartFan) PollStatus(tick <-chan time.Time) {
 	for {
 		select {
 		case <-tick:
-			slog.Info("Polling status")
 			m.GetProperties()
 		}
 	}
