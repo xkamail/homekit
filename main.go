@@ -71,7 +71,7 @@ func main() {
 	//})
 
 	// Create the hap server.
-	server, err := hap.NewServer(fs, fan)
+	server, err := hap.NewServer(fs, fan, airPurifier)
 	if err != nil {
 		// stop if an error happens
 		log.Panic(err)
