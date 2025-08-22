@@ -52,7 +52,6 @@ type XiaomiDevice struct {
 	tokenB   []byte
 	deviceID string
 	rawState map[string]interface{}
-	messages chan interface{}
 
 	lastDiscovery time.Time
 }
@@ -69,7 +68,6 @@ func (d *XiaomiDevice) start(deviceIP, token string, port int) error {
 		return err
 	}
 
-	d.messages = make(chan interface{}, 100)
 	d.conn = c
 	if "" != token {
 		d.token = token
@@ -87,7 +85,6 @@ func (d *XiaomiDevice) start(deviceIP, token string, port int) error {
 // Stops listeners.
 func (d *XiaomiDevice) stop() {
 	if nil != d.conn {
-		close(d.messages)
 		d.conn.Close()
 	}
 }
@@ -287,12 +284,11 @@ func (d *XiaomiDevice) sendAndWait(p *packet.Packet, cmd string, storeResponse b
 			if storeResponse {
 				d.Lock()
 				d.rawState[cmd] = dec
-				d.messages <- cmd
 				d.Unlock()
 			}
 
 			return true
-		case <-time.After(5 * time.Second):
+		case <-time.After(3 * time.Second):
 			slog.Error("Timeout while waiting on response fot", "command", cmd)
 			return false
 		}
