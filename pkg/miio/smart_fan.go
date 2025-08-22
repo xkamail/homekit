@@ -2,6 +2,7 @@ package miio
 
 import (
 	"encoding/json"
+	"log/slog"
 	"time"
 )
 
@@ -24,8 +25,6 @@ func NewSmartFan(ip string, token string) (*SmartFan, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	go mi.pollStatus()
 	return &mi, nil
 }
 
@@ -131,13 +130,12 @@ func (m *SmartFan) updateState() {
 	}
 }
 
-// leak memory
-func (m *SmartFan) pollStatus() {
-	ticker := time.NewTicker(time.Second * 10)
-	defer ticker.Stop()
+// PollStatus polls the device status.
+func (m *SmartFan) PollStatus(tick <-chan time.Time) {
 	for {
 		select {
-		case <-ticker.C:
+		case <-tick:
+			slog.Info("Polling status")
 			m.GetProperties()
 		}
 	}

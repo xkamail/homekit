@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/acoshift/configfile"
 	"github.com/brutella/hap"
@@ -21,16 +22,17 @@ var cfg = configfile.NewEnvReader()
 func main() {
 	configfile.LoadDotEnv()
 
-	fan, err := newSmartFan(cfg.String("fan_ip"), cfg.String("fan_token"))
+	fan, fanDevice, err := newSmartFan(cfg.String("fan_ip"), cfg.String("fan_token"))
 	if err != nil {
 		log.Panic(err)
 		return
 	}
-	airPurifier, err := newAirPurifier(cfg.String("air_purifier_ip"), cfg.String("air_purifier_token"))
-	if err != nil {
-		log.Panic(err)
-		return
-	}
+
+	go func() {
+		tick := time.NewTicker(time.Second * 5)
+		defer tick.Stop()
+		fanDevice.PollStatus(tick.C)
+	}()
 
 	// Store the data in the "./db" directory.
 	fs := hap.NewFsStore("./db")
@@ -67,7 +69,7 @@ func main() {
 	//})
 
 	// Create the hap server.
-	server, err := hap.NewServer(fs, fan, airPurifier)
+	server, err := hap.NewServer(fs, fan)
 	if err != nil {
 		// stop if an error happens
 		log.Panic(err)
@@ -96,10 +98,10 @@ func main() {
 	server.ListenAndServe(ctx)
 }
 
-func newSmartFan(ip string, token string) (*accessory.A, error) {
+func newSmartFan(ip string, token string) (*accessory.A, *miio.SmartFan, error) {
 	m, err := miio.NewSmartFan(ip, token)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	a := accessory.NewFan(accessory.Info{
 		Name:  "Smart Fan",
@@ -140,7 +142,7 @@ func newSmartFan(ip string, token string) (*accessory.A, error) {
 		fanDirection.SetValue(dir)
 		fanSwing.SetValue(dir)
 	})
-	return a.A, nil
+	return a.A, m, nil
 }
 
 func newAirPurifier(ip, token string) (*accessory.A, error) {
