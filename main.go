@@ -118,6 +118,7 @@ func newSmartFan(ip string, token string) (*accessory.A, *miio.SmartFan, error) 
 
 	fanSpeed.OnValueRemoteUpdate(func(v float64) {
 		m.SetLevel(int(v))
+		m.SetPower(true) // in-case the fan is off
 	})
 
 	fanSwing := characteristic.NewSwingMode()
