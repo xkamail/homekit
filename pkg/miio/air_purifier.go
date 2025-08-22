@@ -29,7 +29,7 @@ func NewAirPurifier(ip string, token string) (*AirPurifier, error) {
 }
 
 func (p *AirPurifier) pollStatus() {
-	ticker := time.NewTicker(time.Second * 10)
+	ticker := time.NewTicker(time.Second * 5)
 	for {
 		select {
 		case <-ticker.C:

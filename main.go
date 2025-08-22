@@ -28,6 +28,8 @@ func main() {
 		return
 	}
 
+	airPurifier, err := newAirPurifier(cfg.String("air_purifier_ip"), cfg.String("air_purifier_token"))
+
 	go func() {
 		tick := time.NewTicker(time.Second * 5)
 		defer tick.Stop()

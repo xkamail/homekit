@@ -44,9 +44,9 @@ func newConnection(ip string, port int) (*connection, error) {
 		conn:           con,
 		closeWrite:     make(chan bool),
 		closeRead:      make(chan bool),
-		inMessages:     make(chan []byte, 100),
-		outMessages:    make(chan []byte, 100),
-		DeviceMessages: make(chan []byte, 100),
+		inMessages:     make(chan []byte),
+		outMessages:    make(chan []byte),
+		DeviceMessages: make(chan []byte),
 	}
 
 	c.start()
